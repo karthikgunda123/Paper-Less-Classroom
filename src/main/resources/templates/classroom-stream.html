@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fregments :: head"></head>
+
+<body>
+  <div th:replace="fregments :: theme-change"></div>
+  <!-- Main Section Start -->
+  <main>
+    <!-- Main header -->
+    <header th:replace="fregments :: main-header" class="py-3 border-bottom"></header>
+
+    <div th:replace="fregments :: classroom-header"></div>
+
+      <div class="container-fluid">
+        <div class="row">
+          <div th:replace="fregments :: sidebar" class="col col-lg-2 col-md-3 col-sm-12 m-0 p-0"></div>
+          <div class="col m-0 p-0">
+            <div class="p-3 rounded m-3 ms-0 mb-5 border overflow-auto mt-0 me-0" style="height: 100vh;">
+              <div class="pb-5 mb-5">
+                <div class="row">
+                  <div class="col-lg-10 mt-2 mx-auto">
+                    <div th:if="${error}" th:replace="fregments :: alert-error"></div>
+                    <div th:if="${success}" th:replace="fregments ::  alert-success"></div>
+                    <div th:if="${warning}" th:replace="fregments ::  alert-warning"></div>
+                    <div class="mb-2 rounded text-body-emphasis bg-body-secondary">
+                      <div class="col-lg-6 p-0 m-0 position-relative w-100" style="height: 300px;">
+                        <div class="overlay overlay-2"></div>
+                        <img th:src="@{'/files/' + ${classroom.imageName}}" class="w-100 h-100 object-fit-cover rounded border" alt="Classroom Header Image">
+                        <div class="position-absolute start-0 bottom-0 p-4">
+                          <h1 class="display-6 text-white" th:text="${classroom.name}"></h1>
+                          <p th:if="${classroom.session}" class="p-0 mb-0 text-white" th:text="${classroom.session}"></p>
+                          <a class="mb-0 btn btn-light mt-2" th:if="${classroom.isMeetingLinkStatus()}" target="_blank" title="Meeting Link" th:href="${classroom.meetingLink}" th:text="${classroom.meetingLink}"></a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!--      Description       -->
+                    <div class="accordion" id="accordionExample">
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Details
+                          </button>
+                        </h2>
+
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                          <div class="accordion-body">
+                            <p class="mb-0 pb-1" th:if="${classroom.room}">Room: <span th:text="${classroom.room}"></span></p>
+                            <p class="mb-0 pb-1" th:if="${classroom.subject}">Subject: <span th:text="${classroom.subject}"></span></p>
+                            <p class="mb-0 pb-1" th:if="${classroom.description}">Description: <span th:text="${classroom.description}"></span></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!--        Post Something            -->
+                    <div th:if="${!classroom.canPost || classroom.teacher.username == session.user.username || isTeacher}" class="accordion mt-2 py-2" id="accordionExample2">
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwoThree" aria-expanded="false" aria-controls="collapseTwoThree">
+                            <div class="d-flex align-items-center">
+                              <img th:src="@{/files/avatar.png}" alt="Avatar" width="40" height="40" class="rounded-circle">
+                              <div class="text ms-3">
+                                <p class="mb-0 pb-0">Announce something to your class</p>
+                              </div>
+                            </div>
+                          </button>
+                        </h2>
+                        <div id="collapseTwoThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample2">
+                          <div class="accordion-body">
+                            <form th:action="@{'/classroom/post/' + ${classroom.url} + '?type=post'}" th:object="${post}" enctype="multipart/form-data" method="post">
+                              <textarea class="content-richText form-control p-3" name="content" th:field="*{content}" style="height: 150px;"></textarea>
+                              <div class="mt-3">
+                                <input class="form-control" name="file" type="file" id="formFile">
+                              </div>
+
+                              <div class="mt-3">
+                                <p class="mb-2 fs-4">Select Sections:</p>
+                                <span class="border-bottom border-2 pb-1">
+                                  <input type="checkbox" checked id="selectAll" onclick="toggleCheckboxes()"> <label for="selectAll" class="mb-2">All Sections</label><br>
+                                </span>
+
+                                <th:block th:each="section : ${allSections}">
+                                  <input type="checkbox" th:id="${'section_' + section.id}" checked name="sections" th:value="${section.id}"> <label th:for="${'section_' + section.id}" th:text="${section.name}"></label><br>
+                                </th:block>
+                              </div>
+
+                              <button th:disabled="${allSections.size() == 0}" type="submit" class="btn btn-primary mt-3 px-4">Post</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!--      Stream       -->
+                    <div class="streams mt-4">
+                      <div th:each="post : ${posts}" th:if="${post.isStatus() or isTeacher or session.user.equals(post.user.username)}" class="row mx-0 rounded border bg-body p-3 mb-3">
+                        <!-- for regular stream post -->
+                        <div th:if="${post.type == 'POST'}">
+                          <!-- user post info -->
+                          <div class="d-flex mx-0 px-0 justify-content-between align-items-center">
+                            <div class="profile-section d-flex align-items-center">
+                              <img th:src="@{/files/avatar.png}" alt="mdo" width="40" height="40" class="rounded-circle">
+                              <div class="text ms-3">
+                                <p class="mb-0 pb-0" th:text="${post.user.firstName + ' ' + post.user.lastName}"></p>
+                                <p class="text-small text-muted mb-0 pb-0"><span th:text="${#dates.format(post.postDate, 'MMM dd')}"></span><span th:if="${isTeacher}"> . <span th:each="sectionName : ${post.sections} " th:text="${sectionName.name + ', '}"></span></span></p>
+                                <p th:if="${isTeacher or session.user.equals(post.user.username)}" class="text-small text-muted mb-0 pb-0">Status: <span th:text="${post.isStatus() ? 'Visible' : 'Hidden'}"></span></p>
+                              </div>
+                            </div>
+
+                            <!-- Action -->
+                            <div th:replace="fregments :: post-action-menu"></div>
+                          </div>
+
+                          <!-- Border divider -->
+                          <div class="border-top rounded my-3"></div>
+
+                          <!-- content -->
+                          <div class="content" th:utext="${post.content}"></div>
+
+                          <!-- Files -->
+                          <a th:if="${post.fileName != null}" target="_blank" th:href="@{'/files/' + ${post.fileName}}" class="mx-0 mt-3 px-0 d-flex align-items-center text-decoration-none bg-body-tertiary rounded w-25">
+                            <img th:src="@{/files/file.jpg}" style="width: 70px;" class="img-fluid rounded m-0 p-0" alt="File">
+                            <p class="p-0 m-0 ms-3 fs-4 ps-2 fw-light">Download</p>
+                          </a>
+                        </div>
+
+                        <div th:if="${post.type == 'ASSIGNMENT'}" class="d-flex align-items-center justify-content-between">
+                          <a th:href="@{'/classroom/instruction/' + ${post.classroom.url} + '/' + ${post.id}}" class="text-decoration-none">
+                            <div class="d-flex mx-0 px-0 justify-content-between align-items-center">
+                              <div class="profile-section d-flex align-items-center">
+                              <span class="rounded-circle bg-primary" style="width: 40px; height: 40px; line-height: 40px; text-align: center;">
+                                <i class="fa fa-tasks text-white" aria-hidden="true"></i>
+                              </span>
+                                <div class="text ms-3">
+                                  <p class="mb-0 pb-0"><span th:text="${post.user.firstName + ' ' + post.user.lastName}"></span> posted a new assignment: <span th:text="${post.title}"></span></p>
+                                  <p class="text-small text-muted mb-0 pb-0"><span th:text="${#dates.format(post.postDate, 'MMM dd, yyyy')}"></span><span th:if="${isTeacher}"> . <span th:each="sectionName : ${post.sections} " th:text="${sectionName.name + ', '}"></span></span></p>
+                                  <p th:if="${isTeacher or session.user.equals(post.user.username)}" class="text-small text-muted mb-0 pb-0">Status: <span th:text="${post.isStatus() ? 'Visible' : 'Hidden'}"></span></p>
+                                  <p class="text-small text-muted mb-0 pb-0">Submission: <span th:text="${post.isCanSubmit() ? 'On' : 'Closed'}"></span></p>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+
+                          <div th:replace="fregments :: post-action-menu"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div th:replace="fregments :: classroom-join-modal"></div>
+
+    <div th:replace="fregments :: scripts"></div>
+  </body>
+</html>

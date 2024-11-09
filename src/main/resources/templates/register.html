@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fregments :: head"></head>
+<body>
+    <div class="form-body without-side">
+        <div class="website-logo">
+            <a th:href="@{/static}">
+                <div class="logo">
+                    <img class="logo-size" th:src="@{images/logo-white.png}" alt="Paper Less Classroom">
+                </div>
+            </a>
+        </div>
+        <div class="row">
+            <div class="img-holder">
+                <div class="bg"></div>
+                <div class="info-holder">
+                    <img th:src="@{images/graphic-form.svg}" alt="Graphic">
+                </div>
+            </div>
+
+            <div class="form-holder">
+
+                <div class="form-content">
+                    <div class="form-items">
+                        <h3>Register new account</h3>
+                        <p>Break the barrier by registered into the classroom.</p>
+                        <form th:action="@{/do-register}" method="post" th:object="${user}">
+
+                            <div th:if="${error}" th:replace="fregments :: alert-error"></div>
+                            <div th:if="${success}" th:replace="fregments :: alert-success"></div>
+
+                            <input class="form-control" th:field="*{firstName}" type="text" name="firstName" placeholder="First Name" required>
+                            <input class="form-control" th:field="*{lastName}" type="text" name="lastName" placeholder="Last Name" required>
+                            <input class="form-control" type="email" th:field="*{username}" name="email" placeholder="E-mail Address" required>
+                            <input class="form-control" type="number" th:field="*{phoneNumber}" name="phoneNumber" placeholder="Phone Number" required>
+                            <textarea class="form-control" rows="4" cols="9" th:field="*{address}" placeholder="Address"></textarea>
+                            <input class="form-control" type="password" th:field="*{password}" name="password" placeholder="Password" required>
+                            <input class="form-control" type="password" name="confirmPassword" placeholder="Confirm Password" required>
+
+                            <div class="form-button mb-3">
+                                <button id="submit" type="submit" class="ibtn w-100">Register</button>
+                            </div>
+                        </form>
+                        <div class="page-links">
+                            <a th:href="@{/login}">Login to account</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fregments :: scripts"></div>
+</body>
+</html>

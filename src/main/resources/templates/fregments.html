@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head th:fragment="head">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${title}"></title>
+  <script th:if="${logcss == null}" th:src="@{../../../../../js/color-modes.js}"></script>
+  <link th:if="${logcss == null}" rel="stylesheet" type="text/css" th:href="@{../../../../../css/docsearch.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{../../../../../css/bootstrap.min.css}">
+
+  <link rel="stylesheet" type="text/css" th:href="@{../../../../../css/fontawesome-all.min.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{../../../../../css/font-awesome.min.4.7.0.css}">
+  <link th:if="${logcss != null}" rel="stylesheet" type="text/css" th:href="@{css/iofrm-style.css}">
+  <link th:if="${logcss != null}" rel="stylesheet" type="text/css" th:href="@{css/iofrm-theme19.css}">
+  <link th:if="${logcss != null}" rel="stylesheet" type="text/css" th:href="@{css/custom-style.css}">
+
+  <link th:if="${logcss == null}" rel="stylesheet" type="text/css" th:href="@{../../../../../css/style.css}">
+  <link th:if="${logcss == null}" rel="stylesheet" type="text/css" th:href="@{../../../../../css/headers.css}"/>
+  <link th:if="${logcss == null}" rel="stylesheet" type="text/css" th:href="@{../../../../../css/sidebars.css}">
+  <link th:if="${logcss == null}" rel="stylesheet" type="text/css" th:href="@{../../../../../css/richtext.min.css}">
+</head>
+<body>
+
+  <div th:fragment="alert-success" th:if="${success}">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+      </symbol>
+      <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+      </symbol>
+      <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      </symbol>
+    </svg>
+    <div class="alert alert-success d-flex align-items-center" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+      <div th:text="${success}"></div>
+    </div>
+  </div>
+
+  <div th:fragment="alert-error" th:if="${error}">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+      </symbol>
+      <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+      </symbol>
+      <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      </symbol>
+    </svg>
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+      <div th:text="${error}"></div>
+    </div>
+  </div>
+
+  <div th:fragment="alert-warning" th:if="${warning}" class="alert alert-warning d-flex align-items-center" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+      <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+      </symbol>
+      <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+      </symbol>
+      <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+      </symbol>
+    </svg>
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    <div th:text="${warning}"></div>
+  </div>
+
+  <!-- Theme Change Button -->
+  <div th:fragment="theme-change">
+    <!-- SVG ICONS -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+      <symbol id="check2" viewBox="0 0 16 16">
+        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+      </symbol>
+      <symbol id="circle-half" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z"/>
+      </symbol>
+      <symbol id="moon-stars-fill" viewBox="0 0 16 16">
+        <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
+      </symbol>
+      <symbol id="sun-fill" viewBox="0 0 16 16">
+        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+      </symbol>
+    </svg>
+    <!-- Mood Changing Button -->
+    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
+      <button
+              class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
+              id="bd-theme"
+              type="button"
+              aria-expanded="false"
+              data-bs-toggle="dropdown"
+              aria-label="Toggle theme (auto)">
+        <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
+          <use href="#circle-half"></use>
+        </svg>
+        <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
+      </button>
+      <ul
+              class="dropdown-menu dropdown-menu-end shadow"
+              aria-labelledby="bd-theme-text"
+      >
+        <li>
+          <button
+                  type="button"
+                  class="dropdown-item d-flex align-items-center"
+                  data-bs-theme-value="light"
+                  aria-pressed="false"
+          >
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#sun-fill"></use>
+            </svg>
+            Light
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+        <li>
+          <button
+                  type="button"
+                  class="dropdown-item d-flex align-items-center"
+                  data-bs-theme-value="dark"
+                  aria-pressed="false"
+          >
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#moon-stars-fill"></use>
+            </svg>
+            Dark
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+        <li>
+          <button
+                  type="button"
+                  class="dropdown-item d-flex align-items-center active"
+                  data-bs-theme-value="auto"
+                  aria-pressed="true"
+          >
+            <svg class="bi me-2 opacity-50 theme-icon" width="1em" height="1em">
+              <use href="#circle-half"></use>
+            </svg>
+            Auto
+            <svg class="bi ms-auto d-none" width="1em" height="1em">
+              <use href="#check2"></use>
+            </svg>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <header th:fragment="main-header" class="py-1 border-bottom mb-1">
+    <div class="container-fluid d-grid gap-3 align-items-center" style="grid-template-columns: 1.5fr 1fr 1fr">
+      <div class="dropdown">
+        <a th:href="@{/}" class="d-flex align-items-center col-lg-6 mb-2 mb-lg-0 link-body-emphasis text-decoration-none" aria-expanded="false" >
+          <img th:src="@{../../../../../../images/logo-icon.png}" width="50px" class="img-fluid" alt="Paper Less Classroom" />
+          <h2 class="ps-3 mb-0">Paper Less Classroom</h2>
+        </a>
+      </div>
+
+      <h1 th:text="${headTitle} == null ? ' ' : ${headTitle}" class="h1 mb-0"></h1>
+
+      <div class="d-flex align-items-center justify-content-end">
+        <div class="flex-shrink-0 dropdown">
+          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGKwyvdoQACncSDlc5my4g9JYCWBkXLbbrnGNNIMncQdzn_NxbdXfl9oErfDuNs_BG4PQ&usqp=CAU" alt="mdo" width="50" height="50" class="rounded-circle" />
+          </a>
+          <ul class="dropdown-menu text-small shadow">
+            <li>
+              <p class="dropdown-item mb-0" th:text="${session.user.firstName + ' ' + session.user.lastName}"></p>
+              <p class="text-muted px-3" th:text="${session.user.username}"></p>
+            </li>
+            <li><hr class="dropdown-divider"/></li>
+            <li><a class="dropdown-item" th:href="@{/classroom/new}">New Classroom</a></li>
+            <li><a class="dropdown-item pe-auto" href="#" data-bs-toggle="modal" data-bs-target="#classRoomJoin">Join Classroom</a></li>
+<!--            <li><a class="dropdown-item" href="#">Edit Profile</a></li>-->
+            <li><hr class="dropdown-divider"/></li>
+            <li><a class="dropdown-item text-danger" th:href="@{/logout}">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div th:fragment="classroom-header" class="container">
+    <header class="d-flex justify-content-between pb-1">
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a th:href="@{'/classroom/stream/' + ${classroom.url}}" th:class="${active == 'stream' ? 'active nav-link' : ' nav-link'}" class="nav-link">Stream</a></li>
+        <li class="nav-item"><a th:href="@{'/classroom/classwork/' + ${classroom.url}}" th:class="${active == 'classwork' ? 'active nav-link' : ' nav-link'}">Classwork</a></li>
+        <li class="nav-item"><a th:href="@{'/classroom/people/' + ${classroom.url}}" th:class="${active == 'people' ? 'active nav-link' : ' nav-link'}">People</a></li>
+      </ul>
+      <ul th:if="${isTeacher}" class="nav nav-pills">
+        <li class="nav-item"><a th:href="@{'/classroom/setting/' + ${classroom.url}}" class="nav-link"><i class="fa fa-cog fs-4" aria-hidden="true"></i></a></li>
+      </ul>
+    </header>
+  </div>
+
+  <div th:fragment="sidebar" class="col col-lg-2 col-md-3 col-sm-12 m-0 p-0">
+    <div class="p-3 bg-body-tertiary rounded m-3 border mt-0 ms-1" style="height: 100vh;">
+      <ul class="list-unstyled ps-0">
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+            Teaching
+          </button>
+          <div class="collapse show" id="home-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li th:each="classroom : ${clTeacher}" class="rounded py-2 bg-body m-0 p-0 mb-2">
+                <a th:href="@{'/classroom/stream/' + ${classroom.url}}" class="link-body-emphasis text-decoration-none rounded m-0 p-0">
+                  <p class="ms-4 ps-1 rounded pb-0 mb-0" th:text="${classroom.name}"></p>
+                  <p class="ms-4 ps-1 text-muted rounded pb-0 mb-0" th:text="${classroom.session}"></p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="border-top my-3"></li>
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+            Enrolled
+          </button>
+          <div class="collapse show" id="dashboard-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li th:each="classroom : ${clStudents}" class="rounded py-2 bg-body m-0 p-0 mb-0">
+                <a th:href="@{'/classroom/stream/' + ${classroom.url}}" class="link-body-emphasis text-decoration-none rounded m-0 p-0">
+                  <p class="ms-4 ps-1 rounded pb-0 mb-0" th:text="${classroom.name}"></p>
+                  <p class="ms-4 ps-1 text-muted rounded pb-0 mb-0" th:text="${classroom.session}"></p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="border-top my-3"></li>
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+            General
+          </button>
+          <div class="collapse" id="account-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li><a th:href="@{/classroom/teacher/request}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Teacher Request</a></li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div th:fragment="post-action-menu" class="dropdown" th:if="${session.user.getUsername() == post.user.username || isTeacher}">
+    <a class="btn bg-body-secondary rounded" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+      </svg>
+      <i class="bi bi-three-dots-vertical"></i></a>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" th:text="${post.isStatus() ? 'Hide' : 'Activate'}" th:href="@{'/classroom/post/' + ${post.classroom.url} + '/' + ${post.id} + '?type=status'}"></a></li>
+      <li><a class="dropdown-item" th:text="${post.isCanSubmit() ? 'Off Submittion' : 'Accept Submission'}" th:href="@{'/classroom/post/' + ${post.classroom.url} + '/' + ${post.id} + '?type=submit'}"></a></li>
+      <li><a class="dropdown-item" th:href="@{'/classroom/post/' + ${post.classroom.url} + '/' + ${post.id} + '/submission'}">Review Work</a></li>
+      <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+    </ul>
+  </div>
+
+  <div th:fragment="classroom-join-modal" class="modal fade" id="classRoomJoin" tabindex="-1" aria-labelledby="classRoomJoinLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="classRoomJoinLabel">Join Classroom</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form th:action="@{/classroom/section/join}" method="post">
+          <div class="modal-body">
+            <div class="mb-3">
+              <input type="text" name="user" th:value="${session.user.firstName + ' ' + session.user.lastName}" disabled class="form-control user-select-none">
+            </div>
+
+            <div class="mb-3">
+              <label for="inviteCode" class="form-label">Invite code</label>
+              <input type="text" name="inviteCode" id="inviteCode" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Join Now</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div th:fragment="classroom-section-modal" class="modal fade" id="sectionCreate" tabindex="-1" aria-labelledby="sectionCreateModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="sectionCreateLabel">Create Section</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form th:action="@{'/classroom/section/create/' + ${classroom.url}}" method="post">
+          <div class="modal-body">
+            <div class="mb-3">
+              <input type="text" name="classroom" th:value="${classroom.name}" disabled class="form-control user-select-none">
+            </div>
+
+            <div class="mb-3">
+              <label for="sectionName" class="form-label">Section Name</label>
+              <input type="text" id="sectionName" name="sectionName" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="meetingLink" class="form-label">Meeting Link</label>
+              <input type="url" name="meetingLink" id="meetingLink" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Create Section</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div th:fragment="classroom-teacher-modal" class="modal fade" id="teacherAdd" tabindex="-1" aria-labelledby="teacherAddModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="teacherAddLabel">Create Section</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form th:action="@{'/classroom/teacher/add/' + ${classroom.url}}" method="post">
+          <div class="modal-body">
+            <div class="mb-3">
+              <input type="text" name="classroom" th:value="${classroom.name}" disabled class="form-control user-select-none">
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Teacher Email</label>
+              <input type="email" name="email" id="email" class="form-control">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add Teacher</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div th:fragment="classwork-modal" class="modal fade" id="classworkModel" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="classworkModalIdLabel">Create Classwork</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        <div class="modal-body">
+          <form th:action="@{'/classroom/post/' + ${classroom.url} + '?type=assignment'}" method="post" enctype="multipart/form-data" th:object="${post}" id="classworkPost">
+            <div class="mb-3">
+              <label for="title" class="form-label">Title<span class="text-danger">*</span></label>
+              <input type="text" required name="title" th:field="*{title}" id="title" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="content" class="form-label">Instruction<span class="text-danger">*</span></label>
+              <textarea name="content" required id="content" th:field="*{content}" cols="30" rows="5" class="form-control content-richText"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="grade" class="form-label">Grade</label>
+              <input type="number" name="grade" th:field="*{grade}" id="grade" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="dueDate" class="form-label">Due Date<span class="text-danger">*</span></label>
+              <input type="datetime-local" name="str_dueDate" required id="dueDate" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="file" class="form-label">Attachment</label>
+              <input class="form-control" type="file" name="file" id="file">
+            </div>
+
+            <div class="border border-top-1 mb-2"></div>
+
+            <div class="mb-3">
+              <p class="mb-2 fs-4">Select Sections:</p>
+
+              <span class="border-bottom border-2 pb-1">
+                <input type="checkbox" checked id="selectAll" onclick="toggleCheckboxes()"> <label for="selectAll" class="mb-2">All Sections</label><br>
+              </span>
+
+              <th:block th:each="section : ${allSections}">
+                <input type="checkbox" th:id="${'section_' + section.id}" checked name="sections" th:value="${section.id}"> <label th:for="${'section_' + section.id}" th:text="${section.name}"></label><br>
+              </th:block>
+            </div>
+
+            <div class="modal-footer pb-0 mt-4">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Create & Post</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:fragment="scripts">
+    <script th:src="@{../../../../../../js/jquery.min.js}"></script>
+    <script th:src="@{../../../../../../js/popper.min.js}"></script>
+    <script th:src="@{../../../../../../js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{../../../../../../js/main.js}"></script>
+    <script th:src="@{../../../../../../js/sidebars.js}"></script>
+    <script th:if="${logcss == null}" th:src="@{../../../js/jquery.richtext.min.js}"></script>
+    <script th:src="@{../../../../../../js/dynamicForm.js}"></script>
+  </div>
+</body>
+</html>
